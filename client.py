@@ -5,6 +5,7 @@ ID: 010974536
 
 import sys
 from socket import *
+import json
 
 SERVER = '127.0.0.1'
 PORT = 6667
@@ -17,8 +18,8 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect(ADDR)
 
 def recvHiddenWord() -> str:
-    recv_msg = clientSocket.recv(1024).decode(FORMAT)
-    return recv_msg
+    recvMsg = clientSocket.recv(1024).decode(FORMAT)
+    return recvMsg
     
 
 def loop():
@@ -36,9 +37,12 @@ def loop():
 
         # .recv(1024) -> decode
         print('waiting for server to transmit message...')
-        recv_msg = clientSocket.recv(1024).decode(FORMAT)
-
-        print(f'[RECEIVED FROM SERVER]: {recv_msg}')
+        recvData = clientSocket.recv(1024).decode(FORMAT)
+        decodedData = json.loads(recvData)
+        print(f'[RECEIVED FROM SERVER]: {decodedData}\n---\n')
+        print(f'WORD:\n {decodedData[0]}')
+        print(f'\nNUM GUESSES: {decodedData[1]}')
+        print(f'\nGUESS LIST: {decodedData[2]}')
 
 
 print('[START] client is starting...')

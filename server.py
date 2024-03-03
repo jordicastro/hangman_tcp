@@ -6,6 +6,7 @@ ID: 010974536
 import sys
 import random
 from socket import *
+import json
 
 SERVER = '127.0.0.1'
 PORT = 6667
@@ -39,15 +40,24 @@ def handleClient(word):
         # display hiddenword to client
         guess = connSocket.recv(1024).decode(FORMAT)
         hiddenWord = handleGuess(word, guess)
-        connSocket.send(hiddenWord.encode(FORMAT))
-        print(f'guess = {guess}\n going in handleGuess')
+        # send the hidden word, num guesses, and the guess list in json -> dumps string data
+        data = [hiddenWord, numGuesses, guessList]
+        encodedData = json.dumps(data).encode(FORMAT)
+        connSocket.send(encodedData)
 
+    if WIN:
+        msg = f'you won! the word was {word}'
+        connSocket.send(msg.encode(FORMAT))
+        exit
+    if LOSS:
+        msg = f'you lost! the word was {word}'
+        connSocket.send(msg.encode(FORMAT))
+        exit
     connSocket.close()
     # handleWin() | handleLoss()
 def handleGuess(word, guess):
     global guessList, numGuesses, LOSS
     # exceeds num guesses:
-    print('in handle guess')
     if numGuesses == NUM_LOSS:
         print('exceeded num guesses! client lost.')
         LOSS = True
@@ -75,10 +85,6 @@ def handleGuess(word, guess):
 def handleDuplicateGuess():
     pass
 
-def handleWin():
-    #if word does not contain "_" -> win
-    pass
-
 def hideWord(word, guess) -> str:
     global WIN
     hiddenWord = ''
@@ -90,6 +96,7 @@ def hideWord(word, guess) -> str:
     print(f'hidden word is {hiddenWord}')
     if '_' not in hiddenWord:
         WIN = True
+        print(f'WIN is {WIN}')
     return hiddenWord
 
 def start():
