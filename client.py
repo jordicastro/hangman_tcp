@@ -16,16 +16,32 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 
 clientSocket.connect(ADDR)
 
+def recvHiddenWord() -> str:
+    recv_msg = clientSocket.recv(1024).decode(FORMAT)
+    return recv_msg
+    
 
-# .send -> encode
-msg = '[CLIENT]testing send'.encode(FORMAT)
+def loop():
+    # initial hidden word
+    print(recvHiddenWord())
+    while 1:
+        # recieve hiddenWord from server:
 
-clientSocket.send(msg)
+        # prompt client for guess
+        guess = input('\nenter a letter to guess: ').split()[0]
+        # .send -> encode
+        msg = guess.encode(FORMAT)
 
-# .recv(1024) -> decode
+        clientSocket.send(msg)
 
-recv_msg = clientSocket.recv(1024).decode(FORMAT)
+        # .recv(1024) -> decode
+        print('waiting for server to transmit message...')
+        recv_msg = clientSocket.recv(1024).decode(FORMAT)
 
-print(f'[RECEIVED FROM SERVER]: {recv_msg}')
+        print(f'[RECEIVED FROM SERVER]: {recv_msg}')
+
+
+print('[START] client is starting...')
+loop()
 
 clientSocket.close()

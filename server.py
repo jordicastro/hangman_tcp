@@ -4,13 +4,20 @@ ID: 010974536
 '''
 
 import sys
-
+import random
 from socket import *
 
 SERVER = '127.0.0.1'
 PORT = 6667
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
+guessList = []
+numGuesses = 0
+NUM_LOSS = 7
+WIN = False
+LOSS = False
+
+WORDS = ['apple', 'galaxy', 'puzzle', 'axiom', 'notebook', 'pajama', 'octupus', 'subway', 'oxygen', 'copyright']
 
 serverSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -21,12 +28,83 @@ serverSocket.listen(1)
 
 print('server ready to receive.')
 
-while 1:
+def handleClient(word):
+    global WIN, LOSS
+    guess = ''
+    # establishing connection with client
     connSocket, addr = serverSocket.accept()
-    sentence = connSocket.recv(1024).decode(FORMAT)
-    sentence = sentence + ' [SERVER]: added this part, sending back your way!'.encode(FORMAT)
-
-    connSocket.send(sentence)
+    # initial send
+    connSocket.send(hideWord(word, guess).encode(FORMAT))
+    while not (WIN or LOSS):
+        # display hiddenword to client
+        guess = connSocket.recv(1024).decode(FORMAT)
+        hiddenWord = handleGuess(word, guess)
+        connSocket.send(hiddenWord.encode(FORMAT))
+        print(f'guess = {guess}\n going in handleGuess')
 
     connSocket.close()
+    # handleWin() | handleLoss()
+def handleGuess(word, guess):
+    global guessList, numGuesses, LOSS
+    # exceeds num guesses:
+    print('in handle guess')
+    if numGuesses == NUM_LOSS:
+        print('exceeded num guesses! client lost.')
+        LOSS = True
+    # duplicate guess
+    elif guess in guessList:
+        print(f'already used this guess. {guess}\nhandling duplicate guess...')
+        handleDuplicateGuess()
+    # correct guess, update hiddenWord, guessList, & numGuesses
+    elif guess in word:
+        print(f'guess {guess} found in word!\n hiding word')
+        guessList.append(guess)
+        numGuesses += 1
+        print(f'appended list: {guessList}\nnum guesses = {numGuesses}')
+    # incorrect guess
+    else:
+        print(f'wrong guess {guess}\nupdating guess list and guesses')
+        guessList.append(guess)
+        numGuesses+=1
+        print(f'appended list: {guessList}\nnum guesses = {numGuesses}')
 
+    return hideWord(word, guess)
+    
+        
+
+def handleDuplicateGuess():
+    pass
+
+def handleWin():
+    #if word does not contain "_" -> win
+    pass
+
+def hideWord(word, guess) -> str:
+    global WIN
+    hiddenWord = ''
+    for char in word:
+        if char in guessList:
+            hiddenWord += char + ' '
+        else:
+            hiddenWord += '_ '
+    print(f'hidden word is {hiddenWord}')
+    if '_' not in hiddenWord:
+        WIN = True
+    return hiddenWord
+
+def start():
+    choice = input('enter a word or enter 0 for a randomized word: ')
+    if choice == '0':
+        word = random.choice(WORDS)
+    else:
+        word = choice.split()[0].lower()
+
+    print(f'the word is {word}\nhandling client...\n')
+
+    handleClient(word)
+
+
+
+
+print('[START] server is starting...')
+start()
