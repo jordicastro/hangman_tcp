@@ -17,6 +17,7 @@ numGuesses = 0
 NUM_LOSS = 7
 WIN = False
 LOSS = False
+STATE = True
 
 WORDS = ['apple', 'galaxy', 'puzzle', 'axiom', 'notebook', 'pajama', 'octupus', 'subway', 'oxygen', 'copyright']
 
@@ -30,7 +31,7 @@ serverSocket.listen(1)
 print('server ready to receive.')
 
 def handleClient(word):
-    global WIN, LOSS
+    global WIN, LOSS, STATE
     guess = ''
     # establishing connection with client
     connSocket, addr = serverSocket.accept()
@@ -39,32 +40,41 @@ def handleClient(word):
     while not (WIN or LOSS):
         # display hiddenword to client
         guess = connSocket.recv(1024).decode(FORMAT)
-        hiddenWord = handleGuess(word, guess)
+        hiddenWord = handleGuess(word, guess) 
         # send the hidden word, num guesses, and the guess list in json -> dumps string data
-        data = [hiddenWord, numGuesses, guessList]
-        encodedData = json.dumps(data).encode(FORMAT)
-        connSocket.send(encodedData)
-
+        if STATE:
+            data = [hiddenWord, numGuesses, guessList, STATE]
+            encodedData = json.dumps(data).encode(FORMAT)
+            connSocket.send(encodedData)
+    # final game state
+    # STATE = False
+    # finalData = [hideWord(word, guess), numGuesses, guessList, STATE]
+    # encodedFinalData = json.dumps(finalData).encode(FORMAT)
+    # connSocket.send(encodedFinalData)
+    # end game logic
     if WIN:
         msg = f'you won! the word was {word}'
-        connSocket.send(msg.encode(FORMAT))
-        exit
     if LOSS:
         msg = f'you lost! the word was {word}'
-        connSocket.send(msg.encode(FORMAT))
-        exit
+
+    finalData = [msg, numGuesses, guessList, STATE]
+    encodedFinalData = json.dumps(finalData).encode(FORMAT)
+    print(f'sending final msg {encodedFinalData} to client ')
+    connSocket.send(encodedFinalData)
+
     connSocket.close()
-    # handleWin() | handleLoss()
+    
 def handleGuess(word, guess):
-    global guessList, numGuesses, LOSS
+    global guessList, numGuesses, LOSS, STATE
     # exceeds num guesses:
     if numGuesses == NUM_LOSS:
         print('exceeded num guesses! client lost.')
         LOSS = True
+        STATE = False
+        exit
     # duplicate guess
     elif guess in guessList:
         print(f'already used this guess. {guess}\nhandling duplicate guess...')
-        handleDuplicateGuess()
     # correct guess, update hiddenWord, guessList, & numGuesses
     elif guess in word:
         print(f'guess {guess} found in word!\n hiding word')
@@ -79,14 +89,10 @@ def handleGuess(word, guess):
         print(f'appended list: {guessList}\nnum guesses = {numGuesses}')
 
     return hideWord(word, guess)
-    
-        
 
-def handleDuplicateGuess():
-    pass
 
 def hideWord(word, guess) -> str:
-    global WIN
+    global WIN, STATE
     hiddenWord = ''
     for char in word:
         if char in guessList:
@@ -96,7 +102,8 @@ def hideWord(word, guess) -> str:
     print(f'hidden word is {hiddenWord}')
     if '_' not in hiddenWord:
         WIN = True
-        print(f'WIN is {WIN}')
+        STATE = False
+        print(f'WIN is {WIN}\nSTATE is {STATE}')
     return hiddenWord
 
 def start():

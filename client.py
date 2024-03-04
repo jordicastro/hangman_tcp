@@ -23,9 +23,10 @@ def recvHiddenWord() -> str:
     
 
 def loop():
+    state = True
     # initial hidden word
     print(recvHiddenWord())
-    while 1:
+    while state:
         # recieve hiddenWord from server:
 
         # prompt client for guess
@@ -43,6 +44,13 @@ def loop():
         print(f'WORD:\n {decodedData[0]}')
         print(f'\nNUM GUESSES: {decodedData[1]}')
         print(f'\nGUESS LIST: {decodedData[2]}')
+        print(f'\nSTATE: {decodedData[3]}')
+        state = decodedData[3]
+
+    # end game win/loss msg
+    recvData = clientSocket.recv(1024).decode(FORMAT)
+    print(recvData)
+
 
 
 print('[START] client is starting...')
