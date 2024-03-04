@@ -3,7 +3,6 @@ Author: Jordi Castro
 ID: 010974536
 '''
 
-import sys
 from socket import *
 import json
 
@@ -24,10 +23,10 @@ def recvHiddenWord() -> str:
 
 def loop():
     state = True
+    gap = '\n\n-------------------------\n\n'
     # initial hidden word
     print(recvHiddenWord())
     while state:
-        # recieve hiddenWord from server:
 
         # prompt client for guess
         guess = input('\nenter a letter to guess: ').split()[0]
@@ -37,23 +36,15 @@ def loop():
         clientSocket.send(msg)
 
         # .recv(1024) -> decode
-        print('waiting for server to transmit message...')
         recvData = clientSocket.recv(1024).decode(FORMAT)
         decodedData = json.loads(recvData)
-        print(f'[RECEIVED FROM SERVER]: {decodedData}\n---\n')
-        print(f'WORD:\n {decodedData[0]}')
-        print(f'\nNUM GUESSES: {decodedData[1]}')
-        print(f'\nGUESS LIST: {decodedData[2]}')
-        print(f'\nSTATE: {decodedData[3]}')
+        print(f'{gap}{decodedData[0]}')
+        print(f'\nREMAINING GUESSES: {7-decodedData[1]}')
+        print(f'\nGUESS LIST: {decodedData[2]}\n')
         state = decodedData[3]
 
-    # end game win/loss msg
-    recvData = clientSocket.recv(1024).decode(FORMAT)
-    print(recvData)
-
-
-
-print('[START] client is starting...')
+print('[START] client is starting...\n')
 loop()
 
 clientSocket.close()
+print('[DONE] socket successfully closed.')

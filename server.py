@@ -3,7 +3,6 @@ Author: Jordi Castro
 ID: 010974536
 '''
 
-import sys
 import random
 from socket import *
 import json
@@ -14,7 +13,7 @@ ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 guessList = []
 numGuesses = 0
-NUM_LOSS = 7
+NUM_LOSS = 6
 WIN = False
 LOSS = False
 STATE = True
@@ -46,22 +45,15 @@ def handleClient(word):
             data = [hiddenWord, numGuesses, guessList, STATE]
             encodedData = json.dumps(data).encode(FORMAT)
             connSocket.send(encodedData)
-    # final game state
-    # STATE = False
-    # finalData = [hideWord(word, guess), numGuesses, guessList, STATE]
-    # encodedFinalData = json.dumps(finalData).encode(FORMAT)
-    # connSocket.send(encodedFinalData)
-    # end game logic
+
     if WIN:
         msg = f'you won! the word was {word}'
     if LOSS:
         msg = f'you lost! the word was {word}'
-
-    finalData = [msg, numGuesses, guessList, STATE]
+    guessList.append(guess)
+    finalData = [msg, numGuesses+1, guessList, STATE]
     encodedFinalData = json.dumps(finalData).encode(FORMAT)
-    print(f'sending final msg {encodedFinalData} to client ')
     connSocket.send(encodedFinalData)
-
     connSocket.close()
     
 def handleGuess(word, guess):
@@ -80,13 +72,11 @@ def handleGuess(word, guess):
         print(f'guess {guess} found in word!\n hiding word')
         guessList.append(guess)
         numGuesses += 1
-        print(f'appended list: {guessList}\nnum guesses = {numGuesses}')
     # incorrect guess
     else:
         print(f'wrong guess {guess}\nupdating guess list and guesses')
         guessList.append(guess)
         numGuesses+=1
-        print(f'appended list: {guessList}\nnum guesses = {numGuesses}')
 
     return hideWord(word, guess)
 
@@ -103,7 +93,6 @@ def hideWord(word, guess) -> str:
     if '_' not in hiddenWord:
         WIN = True
         STATE = False
-        print(f'WIN is {WIN}\nSTATE is {STATE}')
     return hiddenWord
 
 def start():
@@ -122,3 +111,4 @@ def start():
 
 print('[START] server is starting...')
 start()
+print('[DONE] server socket successfully closed.')
