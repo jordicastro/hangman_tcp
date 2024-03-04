@@ -106,9 +106,6 @@ def start():
 
     handleClient(word)
 
-
-
-
 print('[START] server is starting...')
 start()
 print('[DONE] server socket successfully closed.')
