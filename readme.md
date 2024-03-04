@@ -24,7 +24,7 @@ ID: 010974536
 ```sh
     python3 server.py
 ```
-7. enter hangman word in server terminal, 0 for randomized word
+enter hangman word in server terminal, 0 for randomized word
 7. run client next
 ```sh
     python3 client.py
@@ -32,3 +32,5 @@ ID: 010974536
 8. enter guesses in client terminal.
 
 ### enjoy! :)
+
+[jordi castro](https://github.com/jordicastro)
