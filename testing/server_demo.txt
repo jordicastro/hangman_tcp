@@ -1,0 +1,35 @@
+Script started on 2024-03-05 16:52:04-0600
+jc163@turing:~/networks/hangman_tcp$ python3 server.py
+server ready to receive.
+[START] server is starting...
+enter a word or enter 0 for a randomized word: arkansas
+the word is arkansas
+handling client...
+
+hidden word is _ _ _ _ _ _ _ _ 
+guess a found in word!
+ hiding word
+hidden word is a _ _ a _ _ a _ 
+guess r found in word!
+ hiding word
+hidden word is a r _ a _ _ a _ 
+guess s found in word!
+ hiding word
+hidden word is a r _ a _ s a s 
+guess n found in word!
+ hiding word
+hidden word is a r _ a n s a s 
+wrong guess y
+updating guess list and guesses
+hidden word is a r _ a n s a s 
+wrong guess z
+updating guess list and guesses
+hidden word is a r _ a n s a s 
+guess k found in word!
+ hiding word
+hidden word is a r k a n s a s 
+[DONE] server socket successfully closed.
+jc163@turing:~/networks/hangman_tcp$ exit
+exit
+
+Script done on 2024-03-05 16:53:23-0600

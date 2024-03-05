@@ -1,6 +1,6 @@
 '''
 Author: Jordi Castro
-ID: 010974536
+Date: 3/5/24
 '''
 
 import random
@@ -13,7 +13,7 @@ ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 guessList = []
 numGuesses = 0
-NUM_LOSS = 6
+NUM_LOSS = 7
 WIN = False
 LOSS = False
 STATE = True
@@ -50,8 +50,8 @@ def handleClient(word):
         msg = f'you won! the word was {word}'
     if LOSS:
         msg = f'you lost! the word was {word}'
-    guessList.append(guess)
-    finalData = [msg, numGuesses+1, guessList, STATE]
+    # guessList.append(guess)
+    finalData = [msg, numGuesses, guessList, STATE]
     encodedFinalData = json.dumps(finalData).encode(FORMAT)
     connSocket.send(encodedFinalData)
     connSocket.close()

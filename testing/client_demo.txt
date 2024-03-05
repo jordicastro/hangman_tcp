@@ -1,0 +1,94 @@
+Script started on 2024-03-05 16:52:11-0600
+jc163@turing:~/networks/hangman_tcp$ python3 client.py
+[START] client is starting...
+
+_ _ _ _ _ _ _ _ 
+
+enter a letter to guess: a
+
+
+-------------------------
+
+a _ _ a _ _ a _ 
+
+REMAINING GUESSES: 6
+
+GUESS LIST: ['a']
+
+
+enter a letter to guess: r
+
+
+-------------------------
+
+a r _ a _ _ a _ 
+
+REMAINING GUESSES: 5
+
+GUESS LIST: ['a', 'r']
+
+
+enter a letter to guess: s
+
+
+-------------------------
+
+a r _ a _ s a s 
+
+REMAINING GUESSES: 4
+
+GUESS LIST: ['a', 'r', 's']
+
+
+enter a letter to guess: n
+
+
+-------------------------
+
+a r _ a n s a s 
+
+REMAINING GUESSES: 3
+
+GUESS LIST: ['a', 'r', 's', 'n']
+
+
+enter a letter to guess: y
+
+
+-------------------------
+
+a r _ a n s a s 
+
+REMAINING GUESSES: 2
+
+GUESS LIST: ['a', 'r', 's', 'n', 'y']
+
+
+enter a letter to guess: z
+
+
+-------------------------
+
+a r _ a n s a s 
+
+REMAINING GUESSES: 1
+
+GUESS LIST: ['a', 'r', 's', 'n', 'y', 'z']
+
+
+enter a letter to guess: k
+
+
+-------------------------
+
+you won! the word was arkansas
+
+REMAINING GUESSES: 0
+
+GUESS LIST: ['a', 'r', 's', 'n', 'y', 'z', 'k']
+
+[DONE] socket successfully closed.
+jc163@turing:~/networks/hangman_tcp$ exit
+exit
+
+Script done on 2024-03-05 16:53:20-0600
